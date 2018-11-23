@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+    <meta name="author" content="">
+	<title>营业收入账单</title>
+	<!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/payment.css">
+    <link rel="stylesheet" type="text/css" href="font/iconfont.css">
+
+    <!--[if lt IE 9]>
+      <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+		<header>
+            <div class="header-left">返回</div>
+            <div class="header-right">收益付款账单</div>
+        </header><!-- /header -->
+        <div class="main">
+            <div class="main-top">
+                <div class="mt-left">
+                    <p>687945.58</p>
+                    <span>当前累计营业额</span>
+                </div>
+                <div class="mt-right">
+                    <p>366.79</p>
+                    <span>今日营业额</span>
+                </div>
+            </div>
+            <div class="main-bottom">
+                <div class="title">
+                    历史账单列表
+                </div>
+                <div class="main-center">
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <span class="span1">待支付</span>
+                                <ul>
+                                    <li style="width: 17%;">
+                                        <span>约定付款日</span><br>
+                                        <span>2018-10-15</span>
+                                    </li>
+                                    <li style="width: 17%;">
+                                        <span>支付时间</span><br>
+                                        <span>待支付</span>
+                                    </li>
+                                    <li style="width: 18%;">
+                                        <span>本期营业额</span><br>
+                                        <span style="color: #ff4800;">11865.8</span>
+                                    </li>
+                                    <li style="width: 14%;">
+                                        <span>本期成本</span><br>
+                                        <span style="color: #23ca9a;">398.7</span>
+                                    </li>
+                                    <li style="width: 14%;">
+                                        <span>支付金额</span><br>
+                                        <span style="color: red;">6880.46</span>
+                                    </li>
+                                </ul>
+                                <a data-toggle="collapse" data-parent="#accordion" 
+                                href="#collapseOne" class="pta">
+                                
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <div class="p">
+                                   <span class="pb-span1">支付时间：</span>
+                                   <span class="pb-span2">待支付</span> 
+                                </div>
+                                <div class="p">
+                                    <span class="pb-span1">本期营业额：</span>
+                                    <span class="pb-span2">2018-9-15 至 2018-10-15   30天    合计营业额 3314.08元  </span> 
+                                </div>
+                                <div class="p">
+                                    <span class="pb-span1">本期成本：</span>
+                                    <span class="pb-span2">2018-9-15 至 2018-10-15   30天    合计成本 368.5元  </span>
+                                </div>
+                                <div class="p">
+                                    <span class="pb-span1" style="width: 23%;">本期支付金额：</span>
+                                    <span class="pb-span2">（3314.08 - 368.5）× 0.6 = 1767.34</span>
+                                </div>
+                                <div class="p" style="font-size: 10px;text-align: center;">
+                                    营业额及成本详单请参见“营业收入账单”与“成本支出账单”,若账单核算中暂无法结算请您耐心等待
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                    </div>
+                </div>
+            </div>
+            </div>
+        	<footer>
+        		<ul>
+        			<a href="index.html"><li style="border-right: 1px solid #fff;"><i class="iconfont">&#xe633;</i><span>首页</span></li></a>
+        			<a href="bill.html"><li style="border-right: 1px solid #fff;" class="blue"><i class="iconfont">&#xe754;</i><span>账单</span></li></a>
+        			<a href="person.html"><li><i class="iconfont">&#xe61a;</i><span>我的</span></li></a>
+        		</ul>
+        	</footer>
+        </div>
+
+</body>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/payment.js"></script>
+</html>

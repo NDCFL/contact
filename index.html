@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>首页</title>
+		<!-- Bootstrap -->
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="css/index.css">
+		<link rel="stylesheet" type="text/css" href="font/iconfont.css">
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css">
+
+		<!--[if lt IE 9]>
+      <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+	</head>
+
+	<body>
+		<div class="container" id="info">
+			<div class="top">
+				<p class="text-center time" id="times">选择日期</p>
+				<p class="text-right explain"><span><img src="images/wen.png" alt=""></span>说明</p>
+
+				<div class="img">
+					<img src="images/qiu.png" alt="">
+					<div class="img-cont">
+						<p class="word1">当日收益</p>
+						<p class="word2">{{infos.nowTime}}</p>
+						<p class="word3"></p>
+						<p class="word4">￥{{infos.nowPayMoney}}</p>
+						<p class="word5">房源{{infos.cnt}}套</p>
+						<p class="word6">合计面积{{infos.area}}㎡</p>
+					</div>
+				</div>
+			</div>
+			<div class="main-line">
+				<img src="images/line.png" alt="">
+				<div class="ml-left">
+					<p class="center-word1">当日营业额</p>
+					<p class="center-word2">￥{{infos.inMoney}}</p>
+					<p class="center-word3">当日营业收入总额</p>
+				</div>
+				<div class="ml-right">
+					<p class="center-word1">当日成本</p>
+					<p class="center-word2">￥{{infos.outMoney}}</p>
+					<p class="center-word3">当日各项成本合计</p>
+				</div>
+			</div>
+			<div class="bottom">
+				<div class="b-top">
+					<p class="bottom-word1">累计收益</p>
+					<p class="bottom-word2">￥{{infos.allNowPayMoney}}</p>
+					<p class="bottom-word3"><span>2018年10月1日</span> 至 <span>今</span></p>
+				</div>
+				<div class="b-bottom">
+					<div class="bb-left">
+						<p class="bottom-word1">当日营业额</p>
+						<p class="bottom-word2">￥{{infos.allNowInMoney}}</p>
+						<p class="bottom-word3">当日营业收入总额</p>
+					</div>
+					<div class="bb-right">
+						<p class="bottom-word1">当日营业额</p>
+						<p class="bottom-word2">￥{{infos.allNowOutMoney}}</p>
+						<p class="bottom-word3">当日营业收入总额</p>
+					</div>
+				</div>
+			</div>
+			<footer>
+				<ul>
+					<a href="index.html">
+						<li style="border-right: 1px solid #fff;" class="blue"><i class="iconfont">&#xe633;</i><span>首页</span></li>
+					</a>
+					<a href="bill.html">
+						<li style="border-right: 1px solid #fff;"><i class="iconfont">&#xe754;</i><span>账单</span></li>
+					</a>
+					<a href="person.html">
+						<li><i class="iconfont">&#xe61a;</i><span>我的</span></li>
+					</a>
+				</ul>
+			</footer>
+		</div>
+
+	</body>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/index.js"></script>
+	<script src="js/flexible.js"></script>
+	<script src="layer/layer.js"></script>
+	<script src="layui/layui.js"></script>
+	<script src="js/vue.min.js"></script>
+	<script>
+		$("#times").html(getDates(new Date()));
+		var vm = new Vue({
+			el: '#info',
+			data: {
+				infos: ''
+			}
+		})
+		var id = localStorage.getItem("id");
+		if(id) {
+			getInfoData("");
+		} else {
+			layer.open({
+				content: '你还未登录，请先登录',
+				yes: function(index, layero) {
+					location.href = "login.html";
+				},
+				cancel: function(index, layero) {
+					location.href = "login.html";
+				}
+			});
+			//    location.href="login.html";
+		}
+
+		function getInfoData(time) {
+			$.post(
+				rootpath + '/contractMaster/getContractMaster', {
+					"id": id,
+					"time": time
+				},
+				function(msg) {
+					console.log(msg[1].id);
+					if(msg[1].isActive != 0) {
+						//正上方
+						layer.msg('你已被管理员禁用，将无权限访问!', {
+							offset: 't',
+							anim: 6
+						});
+						localStorage.removeItem("id")
+						location.href = "login.html";
+						return;
+					} else {
+						//显示相应的数据
+						vm.$data.infos = msg[2];
+						//正上方
+						layer.msg('数据已重置');
+					}
+				}, "json"
+			);
+		}
+		layui.use('laydate', function() {
+			var laydate = layui.laydate;
+			//日期切换的回调
+			laydate.render({
+				elem: '#times',
+				done: function(value, date) {
+					getInfoData(value);
+				}
+			});
+		});
+	</script>
+
+</html>

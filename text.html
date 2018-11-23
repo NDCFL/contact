@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>瑞蓝酒店登录</title>
+		<meta name="keywords" content="瑞蓝酒店后端管理系统，超炫酷的登录页面" />
+		<meta name="description" content="瑞蓝酒店后端登录管理系统，HTML5美观简洁大气响应式带第三方登录网页模板下载。鼠标经过登录按钮带紫色渐变炫酷动画效果。带有简单的表单验证功能。" />
+		<link rel="shortcut icon" href="<%=path%>/static/img/favicon.ico">
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="font/font-awesome-4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="font/iconic/css/material-design-iconic-font.min.css">
+		<link rel="stylesheet" type="text/css" href="css/util.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+	</head>
+	<body>
+		<div class="limiter" style="display: block;" id="content">
+			<div class="container-login100" style="">
+				<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54" style="">
+					<div class="login100-form validate-form" style=";">
+						<div style="color: red;text-align: center;margin: auto;margin-top: -40px;height: 40px;line-height: 40px;">
+							<h3 style="color: #43c5e2;">绑定手机号</h3>
+						</div>
+						<div class="tip-error" style="color: red;text-align: center;margin: auto;height: 20px"></div>
+						<div class="wrap-input100 validate-input m-b-23" data-validate="请输入用户名">
+							<span class="label-input100">手机号</span>
+							<input class="input100" type="text" placeholder="请输入手机" id="loginphone" name="phone" autocomplete="off">
+							<span class="focus-input100" data-symbol="&#xf206;"></span>
+						</div>
+						<div class="wrap-input100 validate-input" data-validate="请输入密码">
+							<span class="label-input100">验证码</span>
+							<input class="input100" type="password" placeholder="请输入手机验证码" id="loginpassword" name="password">
+							<span class="focus-input100" data-symbol="&#xf190;"></span>
+						</div>
+						<div class="wrap-input100 validate-input m-b-23" style="margin-top: 20px">
+							<span class="label-input100">人机验证</span>
+							<div id="vaptchaContainer" class="" style="margin-top: 20px">
+								<div class="vaptcha-init-main ipt">
+									<div class="vaptcha-init-loading">
+										<a href="/" target="_blank">
+											<img src="https://cdn.vaptcha.com/vaptcha-loading.gif" />
+										</a>
+										<span class="vaptcha-text">Vaptcha启动中...</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="text-right p-t-8 p-b-31">
+							<button style="color: #43c5e2;" id="code">获取验证码</button>
+						</div>
+
+						<div class="container-login100-form-btn">
+							<div class="wrap-login100-form-btn">
+								<div class="login100-form-bgbtn"></div>
+								<button class="login100-form-btn" id="login" class="btn">确认绑定手机号</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<input type="hidden" id="page_key_name" value="cpc_user_sign_up" />
+	</body>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script src="https://cdn.vaptcha.com/v2.js"></script>
+<script src="layer/layer.js"></script>
+	<script>
+		var urlVal = window.location.href;
+		var search = decodeURI(urlVal.substr(urlVal.indexOf("=") + 1, urlVal.length));
+		var num = 60;
+		if(!search) {
+
+		} else {
+			$.post(
+				rootpath + '/contractMaster/findContractMaster/' + search,
+				function(msg) {
+					var phone = msg.phone;
+					//phone 为空时，需要绑定手机号
+					if(!phone) {
+						//显示页面，进行绑定
+						$("#content").show();
+						localStorage.removeItem("id");
+						localStorage.setItem("id", msg.id);
+					} else {
+						localStorage.removeItem("id");
+						localStorage.setItem("id", msg.id);
+						location.href = "index.html";
+					}
+				}, "json"
+			);
+		}
+		function showtime() {
+			$("#code").attr("disabled", true);
+			$("#code").css("color","#a4c7e0");
+			if(num > 1) {
+				num--;
+				$("#code").html(num + "秒后重发");
+			} else {
+				$("#code").attr("disabled", false);
+				$("#code").css("color","#43c5e2");
+				$("#code").html("重新发送");
+				num = 60;
+				return;
+			}
+			setTimeout(showtime, 1000);
+		}
+		vaptcha({
+			//配置参数
+			vid: '5be781e9fc650fbc101a01f5',
+			type: 'click',
+			container: '#vaptchaContainer'
+		}).then(function(vaptchaObj) {
+			vaptchaObj.render()
+			vaptchaObj.listen('pass', function() {
+				pass = true;
+			})
+			$("#code").click(function(){
+				var loginphone = $("#loginphone").val();
+				if(!loginphone){
+					$(".tip-error").html("手机号不能为空");
+					return;
+				}
+				if(!vaptchaObj.getToken() || !pass) {
+					$(".tip-error").html("人机验证不通过");
+					return;
+				}
+				$.post(
+					rootpath+"/contractMaster/sendCode",
+					{
+						"mobile":loginphone,
+						"codeType":"register"
+					},
+					function(data){
+						if(data.result=="success"){
+							showtime();
+						}else{
+							//正上方
+							layer.msg(data.message);
+							return;
+						}
+					},"json"
+				);
+			});
+			$('#login').on('click', function() {
+				var loginphone = $("#loginphone").val();
+				var loginpassword = $("#loginpassword").val();
+				if(loginphone == '') {
+					$(".tip-error").html("手机号不能为空");
+					return;
+				}
+				if(loginpassword == '') {
+					$(".tip-error").html("短信验证码不能为空");
+					return;
+				}
+				if(!pass) {
+					$(".tip-error").html("人机验证不通过");
+					return;
+				}
+				var load = layer.load(0, {
+					shade: false
+				});
+				$.post(
+					rootpath + "/contractMaster/changePhone", {
+						"phone": loginphone,
+						"code": loginpassword,
+						"id":localStorage.getItem("id")
+					},
+					function(data) {
+						if(data.result == "fail") {
+							//正上方
+							layer.msg(data.message, {
+								offset: 't',
+								anim: 6
+							});
+							layer.close(load);
+							vaptchaObj.reset();
+							return false;
+						} else {
+							$(".tip-error").html("验证成功");
+							location.href = "index.html";
+						}
+					},
+					"json"
+				);
+			})
+			$('#reset').on('click', function() {
+				//执行验证前需要先判断验证实例是否加载完成
+				vaptchaObj.reset();
+			})
+		})
+	</script>
+
+</html>

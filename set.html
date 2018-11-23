@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>账户设置</title>
+		<!-- Bootstrap -->
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="css/set.css">
+		<link rel="stylesheet" type="text/css" href="font/iconfont.css">
+		<link rel="stylesheet" href="layui/css/layui.css" type="text/css" />
+
+		<!--[if lt IE 9]>
+      <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+	</head>
+
+	<body>
+		<!-- 顶部 -->
+		<header>
+			<div class="header-left">返回</div>
+			<div class="header-right" style="color: red;" onclick="loginOut();">退出登录</div>
+		</header>
+		<!-- 主体 -->
+		<div class="main">
+			<div class="top">
+				<p id="name">巴拉巴拉</p>
+				<div class="touxiang"><img id="faceImg" src="images/pic.png" alt=""></div>
+			</div>
+			<div class="content">
+				<div class="box">
+					<div class="box-small">
+						<label for="phone">用户账号</label>
+						<input type="text" id="phone" readonly="readonly" />
+					</div>
+				</div>
+				<div class="box" style="margin-bottom: 0.5rem;">
+					<div class="box-small">
+						<label for="phone">手机号</label>
+						<input type="text" id="phone_change" placeholder="手机号" style="width: 74%;" />
+						<span onclick="changePhone();">更换</span>
+					</div>
+				</div>
+
+				<!-- 密码修改 -->
+				<div class="panel-group" id="accordion">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">
+                            <span class="span1">密码修改</span>
+                            <a data-toggle="collapse" data-parent="#accordion" 
+                            href="#collapseOne" class="pta">
+                            </a>
+                        </h4>
+						</div>
+						<div id="collapseOne" class="panel-collapse collapse in">
+							<div class="panel-body" style="background: #f0f0f0;">
+								<div class="panel-left">
+									<div class="box">
+										<div class="box-small">
+											<label for="yuanpass">原密码</label>
+											<input type="password" id="yuanpass" placeholder="填写旧密码" />
+										</div>
+									</div>
+									<div class="box">
+										<div class="box-small">
+											<label for="newpass">新密码</label>
+											<input type="password" id="newpass" placeholder="填写新密码" />
+										</div>
+									</div>
+									<div class="box">
+										<div class="box-small">
+											<label for="queren">确认密码</label>
+											<input type="password" id="queren" placeholder="再次确认新密码" />
+										</div>
+									</div>
+								</div>
+								<div class="panel-right">
+									<span onclick="updatePwd();">完成</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<div class="box" style="margin-bottom: 0.5rem;">
+								<div class="box-small">
+									<label for="wx">微信绑定</label>
+									<input type="text" id="wx" placeholder="微信号" style="width: 74%;" />
+									<span>更换</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 底部 -->
+		<footer>
+			<ul>
+				<a href="index.html">
+					<li style="border-right: 1px solid #fff;"><i class="iconfont">&#xe633;</i><span>首页</span></li>
+				</a>
+				<a href="bill.html">
+					<li style="border-right: 1px solid #fff;"><i class="iconfont">&#xe754;</i><span>账单</span></li>
+				</a>
+				<a href="person.html">
+					<li class="blue"><i class="iconfont">&#xe61a;</i><span>我的</span></li>
+				</a>
+			</ul>
+		</footer>
+		<input type="hidden" id="imgs">
+	</body>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/set.js"></script>
+	<script src="js/flexible.js"></script>
+	<script src="layer/layer.js"></script>
+	<script src="layui/layui.js"></script>
+	<script>
+		var id = localStorage.getItem("id");
+		if(id) {
+			$.post(
+				rootpath + '/contractMaster/findContractMaster/' + id,
+				function(msg) {
+					$("#name").html(msg.nickname);
+					$("#faceImg").attr("src", msg.faceImg);
+					$("#phone").val(msg.phone);
+					$("#phone_change").val(msg.phone);
+					$("#wx").val(msg.nickname);
+				}, "json"
+			);
+		} else {
+			layer.open({
+				content: '你还未登录，请先登录',
+				yes: function(index, layero) {
+					location.href = "login.html";
+				},
+				cancel: function(index, layero) {
+					location.href = "login.html";
+				}
+			});
+			//    location.href="login.html";
+		}
+
+		function getImg() {
+			$.post(
+				rootpath + '/contractMaster/updateImg', {
+					id: id,
+					files: $("#imgs").val()
+				},
+				function(msg) {
+					layer.msg('修改成功');
+				}, "json"
+			);
+		}
+		layui.use('upload', function() {
+			var $ = layui.jquery,
+				upload = layui.upload;
+			//普通图片上传
+			var uploadInst = upload.render({
+				elem: '#faceImg',
+				url: rootpath + '/file/up',
+				before: function(obj) {
+					//预读本地文件示例，不支持ie8
+					obj.preview(function(index, file, result) {
+						$('#faceImg').attr('src', result); //图片链接（base64）
+					});
+				},
+				done: function(res) {
+					//如果上传失败
+					if(res.code > 0) {
+						layer.msg('修改失败，服务器繁忙');
+					} else {
+						$("#imgs").val(rootpath + res.data.src);
+						getImg();
+					}
+					//上传成功
+				},
+				error: function() {
+					//演示失败状态，并实现重传
+					var demoText = $('#demoText');
+					demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+					demoText.find('.demo-reload').on('click', function() {
+						uploadInst.upload();
+					});
+				}
+			});
+		});
+
+		function loginOut() {
+			//询问框
+
+			layer.confirm('确认退出系统？', {
+				btn: ['确认', '取消'] //按钮
+			}, function() {
+				localStorage.removeItem("id");
+				location.href = "login.html";
+			}, function() {
+
+			});
+
+		}
+
+		function updatePwd() {
+			var yuanpass = $("#yuanpass").val();
+			var newpass = $("#newpass").val();
+			var queren = $("#queren").val();
+			if(!yuanpass) {
+				layer.msg("请输入旧密码");
+				return;
+			}
+			if(!newpass) {
+				layer.msg("请输入新密码");
+				return;
+			}
+			if(queren != newpass) {
+				layer.msg("两次密码不一致");
+				return;
+			}
+			//修改密码
+			$.post(
+				rootpath + "/contractMaster/updatePassword", {
+					"srcPwd": yuanpass,
+					"id": id,
+					"newPwd": newpass
+				},
+				function(data) {
+					if(data.result == "success") {
+						layer.open({
+							content: '身份已失效，请重新登录',
+							yes: function(index, layero) {
+								location.href = "login.html";
+							},
+							cancel: function(index, layero) {
+								location.href = "login.html";
+							}
+						});
+					}else{
+						layer.msg(data.message);
+						return;
+					}
+				}, "json"
+			);
+		}
+		function changePhone(){
+			location.href = "changePhone.html?id="+id;
+		}
+	</script>
+
+</html>
