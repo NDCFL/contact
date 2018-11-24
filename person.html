@@ -53,7 +53,7 @@
 				</div>
 				<div class="cont-box1">
 					<a href="message.html" title="" style="border-left: 1px solid #ccc;border-top: 1px solid #ccc;">
-						<i><img src="images/xiaoxi1.png" alt=""><em>8</em></i>
+						<i id="show"><img src="images/xiaoxi1.png" alt=""><em id="cnt"></em></i>
 						<span>消息中心</span>
 					</a>
 				</div>
@@ -85,10 +85,16 @@
 		if(id) {
 			$.post(
 				rootpath + '/contractMaster/findContractMaster/' + id,
-				function(msg) {
-
-					$("#name").html(msg.nickname);
-					$("#faceImg").attr("src", msg.faceImg);
+				function(data) {
+					$("#name").html(data.nickname);
+					$("#faceImg").attr("src", data.faceImg);
+					if(data.msg==0){
+						//如果消息为0
+						$("#show").hide();
+					}else{
+						$("#show").show();
+						$("#cnt").html(data.msg);
+					}
 				}, "json"
 			);
 		} else {

@@ -27,13 +27,13 @@
     <div class="main">
         <div class="main-top">
             <div class="mt-left">
-                <p>消息总计</p>
-                <span>5</span>
-            </div>
-            <div class="mt-right">
-                <p>未查收消息</p>
-                <span>2</span>
-            </div>
+				<p>消息总计</p>
+				<span id="sumMsg">0</span>
+			</div>
+			<div class="mt-right">
+				<p>未查收消息</p>
+				<span id="noReadMsg">0</span>
+			</div>
         </div>
 
         <div class="list">
@@ -43,15 +43,11 @@
                         <div class="title">瑞兰团队</div>
                     </div>
                     <div class="list-right">
-                        <span>2018-10-16</span>
+                        <span id="times">2018-10-16</span>
                     </div>
                 </li>
             </ul>
             <div class="mes">
-                尊敬的业主，您的收益我们已经汇出请您注意查收，本期付款金额为2789.56元，本期款项周期为2018-9-16~2018-10-16
-            </div>
-            <div class="img">
-                <img src="images/pic.png" alt="">
             </div>
         </div>
     </div>
@@ -69,5 +65,19 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/mes_detail.js"></script>
 <script src="js/flexible.js"></script>
-
+<script>
+	var str = localStorage.getItem("msgId");
+	var data = new Array;
+	data = str.split(",");
+	$("#sumMsg").html(data[1]);
+	$("#noReadMsg").html(data[2]);
+	$.post(
+		rootpath+"/contracmasterMsg/findContracmasterMsg/"+data[0],
+		function(msg){
+			$(".title").html(msg.name);
+			$("#times").html(getDates(msg.createTime));
+			$(".mes").html(msg.content.replace("/upload",rootpath+"/upload"));
+		},"json"
+	);
+</script>
 </html> 

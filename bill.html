@@ -27,15 +27,15 @@
             <div class="main-top">
                 <div class="child-one">
                     <img src="images/icon1.png" alt="累计总收益">
-                    <span>68798.28</span>
+                    <span id="allInMoney">68798.28</span>
                 </div>
                 <div class="child-two">
                     <img src="images/icon2.png" alt="累计总营收">
-                    <span>68798.28</span>
+                    <span id="allMoney">68798.28</span>
                 </div>
                 <div class="child-one">
                     <img src="images/icon3.png" alt="累计总成本">
-                    <span>68798.28</span>
+                    <span id="allOutMoney">68798.28</span>
                 </div>
             </div>
             <div class="main-bottom">
@@ -74,4 +74,31 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/bill.js"></script>
 <script src="js/flexible.js"></script>
+<script>
+	var id = localStorage.getItem("id");
+	$.post(
+		rootpath + '/contractMaster/getContractMaster', {
+			"id": id,
+			"time": ""
+		},
+		function(msg) {
+			console.log(msg[1].id);
+			if(msg[1].isActive != 0) {
+				//正上方
+				layer.msg('你已被管理员禁用，将无权限访问!', {
+					offset: 't',
+					anim: 6
+				});
+				localStorage.removeItem("id")
+				location.href = "login.html";
+				return;
+			} else {
+				//显示相应的数据
+				$("#allInMoney").html(msg[2].allNowPayMoney);
+				$("#allMoney").html(msg[2].allNowInMoney);
+				$("#allOutMoney").html(msg[2].allNowOutMoney);
+			}
+		}, "json"
+	);
+</script>
 </html>
